@@ -1,0 +1,16 @@
+[mysqld]
+# Bind to all network interfaces (not just localhost)
+# This allows other containers to connect
+bind-address = 0.0.0.0
+
+# Standard MySQL/MariaDB port
+port = 3306
+
+# Skip name resolution (faster, more secure in containers)
+skip-name-resolve
+
+# Data directory (default location)
+datadir = /var/lib/mysql
+
+# Socket file location
+socket = /var/run/mysqld/mysqld.sock
