@@ -15,7 +15,8 @@ echo -e "${GREEN}================================${NC}"
 # Function to wait for MariaDB
 wait_for_db() {
     echo -e "${YELLOW}Waiting for MariaDB to be ready...${NC}"
-    
+    # -h hostname = mariadb
+    # -e execute query "SELECT 1" "wordpress(database)"
     for i in {60..0}; do
         if mysql -h mariadb -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -e "SELECT 1" "${MYSQL_DATABASE}" >/dev/null 2>&1; then
             echo -e "${GREEN}MariaDB is ready!${NC}"
@@ -36,12 +37,15 @@ wait_for_db() {
 wait_for_db
 
 # Check if WordPress is already installed
+# -f : file
 if [ -f /var/www/html/wp-config.php ]; then
     echo -e "${BLUE}WordPress is already installed.${NC}"
 else
     echo -e "${YELLOW}WordPress not found. Installing...${NC}"
     
     # Download WordPress
+    # wp core download : Downloads latest WordPress version, Creates WordPress file structure
+    # --allow-root : allows root execution
     echo -e "${YELLOW}Downloading WordPress...${NC}"
     wp core download --allow-root
     echo -e "${GREEN}WordPress downloaded successfully!${NC}"
@@ -59,6 +63,7 @@ else
     echo -e "${GREEN}wp-config.php created!${NC}"
     
     # Install WordPress
+    # wp core install : Creates database tables,  Creates admin user, Makes WordPress operational
     echo -e "${YELLOW}Installing WordPress...${NC}"
     wp core install \
         --url="${DOMAIN_NAME}" \
@@ -81,12 +86,16 @@ else
     echo -e "${GREEN}User '${WP_USER}' created successfully!${NC}"
     
     # Update URLs to HTTPS
+    # if we didnt update the urls to https it might defaults to http
     wp option update home "https://${DOMAIN_NAME}" --allow-root
     wp option update siteurl "https://${DOMAIN_NAME}" --allow-root
     echo -e "${GREEN}Site URLs updated to HTTPS${NC}"
 fi
 
 # Set permissions
+# find <path> <options> <action>
+# -type d : Find only directories (not files)
+# -type f : Find only files (not directories)
 echo -e "${YELLOW}Setting file permissions...${NC}"
 chown -R www-data:www-data /var/www/html
 find /var/www/html -type d -exec chmod 755 {} \;
@@ -99,4 +108,10 @@ echo -e "${GREEN}Starting PHP-FPM...${NC}"
 echo -e "${GREEN}================================${NC}"
 
 # Start PHP-FPM in foreground
+# PHP FastCGI Process Manager : handle PHP requests efficiently, and it...
+    # 1.Runs the PHP code.
+    # 2.Returns the generated HTML back to Nginx.
+    # 3.Nginx then sends that HTML to the user’s browser.
+# -F flag (Foreground)
+# -R flag (Allow root)
 exec php-fpm7.4 -F -R

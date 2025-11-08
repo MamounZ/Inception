@@ -95,6 +95,7 @@ wait $MYSQL_PID
 echo -e "${GREEN}Starting MariaDB in foreground...${NC}"
 
 # Start MariaDB in foreground (container will keep running)
+# --bind-address=0.0.0.0 : Listen on all network interfaces
 exec mysqld --user=mysql --datadir=/var/lib/mysql --bind-address=0.0.0.0
 EOF
 

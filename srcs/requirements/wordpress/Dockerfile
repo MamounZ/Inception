@@ -15,7 +15,10 @@ RUN apt-get update && apt-get install -y \
     mariadb-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and install WP-CLI
+# Download and install WP-CLI (allows to automate creating users in Docker)
+# -O flag saves the file with its original name
+# mv wp-cli.phar /usr/local/bin/wp to move the file (wp-cli.phar) to path so it could be used from anyware without having to include the path each time
+# and it also renames it to wp for short.
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
     && chmod +x wp-cli.phar \
     && mv wp-cli.phar /usr/local/bin/wp
