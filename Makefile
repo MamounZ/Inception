@@ -13,8 +13,8 @@ MARIADB_DATA = $(DATA_PATH)/mariadb
 WORDPRESS_DATA = $(DATA_PATH)/wordpress
 COMPOSE_FILE = srcs/docker-compose.yml
 
-# Default target
-.DEFAULT_GOAL := help
+## all		: Create directories and start all services
+all: create_dirs up
 
 # Phony targets (not files)
 .PHONY: all build up down start stop restart clean fclean re logs ps help
@@ -23,8 +23,6 @@ COMPOSE_FILE = srcs/docker-compose.yml
 ## Available targets:
 ##
 
-## all		: Create directories and start all services
-all: create_dirs up
 
 ## build		: Build all Docker images
 build:
